@@ -2,6 +2,7 @@ import { createApp, Plugin } from 'vue'
 import App from './App.vue'
 
 import 'normalize.css'
+import 'nes.css/css/nes.min.css'
 import './styles/global.less'
 import 'uno.css'
 

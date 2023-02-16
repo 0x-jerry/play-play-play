@@ -5,11 +5,11 @@ const count = ref(0)
 <template>
   <div class="flex items-center w-screen h-screen gap-2">
     <span>Hello, you can start with a counter: </span>
-    <KButton @click="count++">+1</KButton>
+    <button @click="count++">+1</button>
     <span>
       {{ count }}
     </span>
-    <KButton @click="count++">+1</KButton>
+    <button @click="count++">+1</button>
   </div>
 </template>
 

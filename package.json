@@ -4,29 +4,32 @@
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview",
-    "setup": "cd kit && npm run build"
+    "setup": "cd kit && npm run build",
+    "g:jsnes-type": "dts-gen -m jsnes -f types/jsnes.d.ts"
   },
   "dependencies": {
-    "@0x-jerry/utils": "^1.12.4",
-    "@0x-jerry/vue-kit": "workspace:*",
-    "@vueuse/core": "^9.10.0",
+    "@0x-jerry/utils": "^1.13.0",
+    "@vueuse/core": "^9.12.0",
+    "jsnes": "^1.2.1",
+    "nes.css": "^2.3.0",
     "normalize.css": "^8.0.1",
-    "vue": "^3.2.45",
+    "vue": "^3.2.47",
     "vue-router": "^4.1.6"
   },
   "devDependencies": {
-    "@iconify/json": "^2.2.3",
-    "@types/node": "^18.11.18",
+    "@iconify/json": "^2.2.22",
+    "@types/node": "^18.13.0",
     "@vitejs/plugin-vue": "^4.0.0",
+    "dts-gen": "^0.6.1",
     "less": "^4.1.3",
-    "typescript": "^4.9.4",
-    "unocss": "0.48.1",
-    "unplugin-auto-import": "^0.12.1",
-    "unplugin-icons": "^0.15.1",
-    "unplugin-vue-components": "^0.22.12",
-    "vite": "^4.0.4",
-    "vite-plugin-mkcert": "1.10.1",
+    "typescript": "^4.9.5",
+    "unocss": "0.49.5",
+    "unplugin-auto-import": "^0.14.3",
+    "unplugin-icons": "^0.15.3",
+    "unplugin-vue-components": "^0.24.0",
+    "vite": "^4.1.1",
+    "vite-plugin-mkcert": "1.13.0",
     "vite-plugin-pages": "^0.28.0",
-    "vitest": "^0.26.3"
+    "vitest": "^0.28.5"
   }
 }
