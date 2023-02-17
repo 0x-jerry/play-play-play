@@ -83,10 +83,8 @@ export function useNES() {
   }
 
   async function load(romPath: string) {
-    // Read ROM data from disk (using Node.js APIs, for the sake of this example)
     const romData = await loadRom(romPath)
 
-    // Load ROM data as a string or byte array
     nes.loadROM(romData)
 
     run()
@@ -103,9 +101,9 @@ export function useNES() {
 async function loadRom(romPath: string) {
   const res = await (await fetch(romPath)).blob()
 
-  const reader = new FileReader()
-
   return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+
     reader.onload = () => resolve(reader.result)
 
     reader.onerror = (e) => reject(e)
