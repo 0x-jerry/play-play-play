@@ -7,6 +7,7 @@ const ns = useNES()
 
 onMounted(async () => {
   ns.mount(output.value!)
+
   loadRom()
 })
 
@@ -14,7 +15,7 @@ async function loadRom() {
   if (!output.value) return
 
   ns.init()
-  await ns.load('./roms/croom.nes')
+  await ns.load('./roms/InterglacticTransmissing.nes')
 }
 </script>
 

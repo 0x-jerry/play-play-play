@@ -1,4 +1,3 @@
-import { MaybeRef } from '@vueuse/core'
 import jsnes from 'jsnes'
 
 const { NES, Controller } = jsnes
@@ -40,6 +39,7 @@ export function useNES() {
     },
     onStatusUpdate: console.log,
     onAudioSample: function (l: any, r: any) {
+      // console.log(l, r)
       // audio_samples_L[audio_write_cursor] = l
       // audio_samples_R[audio_write_cursor] = r
       // audio_write_cursor = (audio_write_cursor + 1) & SAMPLE_MASK
@@ -95,12 +95,20 @@ export function useNES() {
   function run() {
     nes.frame()
     render()
+
     requestAnimationFrame(run)
   }
 }
 
 async function loadRom(romPath: string) {
-  const res = await fetch(romPath)
+  const res = await (await fetch(romPath)).blob()
 
-  return await res.text()
+  const reader = new FileReader()
+
+  return new Promise((resolve, reject) => {
+    reader.onload = () => resolve(reader.result)
+
+    reader.onerror = (e) => reject(e)
+    reader.readAsBinaryString(res)
+  })
 }

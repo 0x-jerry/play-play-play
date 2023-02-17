@@ -10,7 +10,7 @@
   "dependencies": {
     "@0x-jerry/utils": "^1.13.0",
     "@vueuse/core": "^9.12.0",
-    "jsnes": "^1.2.1",
+    "jsnes": "git://github.com/bfirsh/jsnes.git",
     "nes.css": "^2.3.0",
     "normalize.css": "^8.0.1",
     "vue": "^3.2.47",
