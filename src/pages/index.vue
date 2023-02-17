@@ -1,16 +1,30 @@
 <script lang="ts" setup>
-const count = ref(0)
+import { useNES } from '@/hooks/useNES'
+
+const output = ref<HTMLElement>()
+
+const ns = useNES()
+
+onMounted(async () => {
+  ns.mount(output.value!)
+  loadRom()
+})
+
+async function loadRom() {
+  if (!output.value) return
+
+  ns.init()
+  await ns.load('./roms/croom.nes')
+}
 </script>
 
 <template>
-  <div class="flex items-center w-screen h-screen gap-2">
-    <span>Hello, you can start with a counter: </span>
-    <button @click="count++">+1</button>
-    <span>
-      {{ count }}
-    </span>
-    <button @click="count++">+1</button>
+  <div class="flex flex-col items-center justify-center w-screen h-screen gap-2">
+    <div ref="output"></div>
+    <NButton @click="loadRom">Load ROM</NButton>
   </div>
 </template>
 
-<style lang="less"></style>
+<style lang="less">
+//
+</style>
