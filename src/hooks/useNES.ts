@@ -1,47 +1,28 @@
+import { Buttons } from '@/lib/gamepad'
 import { NES, Controller } from 'jsnes'
 import RingBuffer from 'ringbufferjs'
+import { useXGamepad } from './useXGamepad'
 
 const size = {
   w: 256,
   h: 240,
 }
 
-var SAMPLE_COUNT = 4 * 1024
-var SAMPLE_MASK = SAMPLE_COUNT - 1
-
 export function useNES() {
   const buffer = new RingBuffer<number>(new AudioContext().sampleRate * 2)
 
   const _canvas = createCanvas()
-  const _audio = createAudioContext((e) => {
-    const left = e.outputBuffer.getChannelData(0)
-    const right = e.outputBuffer.getChannelData(1)
-    const size = left.length
-
-    if (buffer.size() < size * 2) {
-      return
-    }
-
-    try {
-      const samples = buffer.deqN(size * 2)
-      for (let i = 0; i < size; i++) {
-        left[i] = samples[i * 2]
-        right[i] = samples[i * 2 + 1]
-      }
-    } catch (e) {
-      for (let j = 0; j < size; j++) {
-        left[j] = 0
-        right[j] = 0
-      }
-      return
-    }
-  })
+  const _audio = createAudioContext(processAudio)
 
   const { ctx2d } = _canvas
 
   const ctx = reactive({
     paused: false,
   })
+
+  const cache = {
+    _id: 0,
+  }
 
   const output = {
     buf32: new Uint32Array(0),
@@ -72,6 +53,10 @@ export function useNES() {
 
   initController(nes)
 
+  onUnmounted(() => {
+    cancelAnimationFrame(cache._id)
+  })
+
   return {
     nes,
     audio: _audio,
@@ -99,6 +84,30 @@ export function useNES() {
     },
   }
 
+  function processAudio(e: AudioProcessingEvent) {
+    const left = e.outputBuffer.getChannelData(0)
+    const right = e.outputBuffer.getChannelData(1)
+    const size = left.length
+
+    if (buffer.size() < size * 2) {
+      return
+    }
+
+    try {
+      const samples = buffer.deqN(size * 2)
+      for (let i = 0; i < size; i++) {
+        left[i] = samples[i * 2]
+        right[i] = samples[i * 2 + 1]
+      }
+    } catch (e) {
+      for (let j = 0; j < size; j++) {
+        left[j] = 0
+        right[j] = 0
+      }
+      return
+    }
+  }
+
   function render() {
     const imageData = new ImageData(new Uint8ClampedArray(output.buf32.buffer), size.w, size.h)
 
@@ -118,7 +127,7 @@ export function useNES() {
     nes.frame()
     render()
 
-    requestAnimationFrame(run)
+    cache._id = requestAnimationFrame(run)
   }
 }
 
@@ -189,6 +198,57 @@ function initController(nes: NES) {
 
   useEventListener('keyup', (e) => keyboard(e, nes.buttonUp))
 
+  // setup with gamepad
+  const gamepadButtonsMap: Partial<Record<Buttons, any>> = {
+    a: Controller.BUTTON_A,
+    b: Controller.BUTTON_B,
+    view: Controller.BUTTON_SELECT,
+    menu: Controller.BUTTON_START,
+  }
+
+  useXGamepad({
+    connect(vg) {
+      vg.controller.on('press', (key) => {
+        const nesKey = gamepadButtonsMap[key]
+        if (nesKey != null) {
+          nes.buttonDown(1, nesKey)
+        }
+      })
+
+      vg.controller.on('release', (key) => {
+        const nesKey = gamepadButtonsMap[key]
+        if (nesKey != null) {
+          nes.buttonUp(1, nesKey)
+        }
+      })
+
+      vg.controller.on('move', (d, data) => {
+        if (d !== 'left') return
+
+        const threshold = 0.4
+
+        if (data.x < -threshold) {
+          nes.buttonDown(1, Controller.BUTTON_LEFT)
+        } else if (data.x < threshold) {
+          nes.buttonUp(1, Controller.BUTTON_LEFT)
+          nes.buttonUp(1, Controller.BUTTON_RIGHT)
+        } else {
+          nes.buttonDown(1, Controller.BUTTON_RIGHT)
+        }
+
+        if (data.y < -threshold) {
+          nes.buttonDown(1, Controller.BUTTON_UP)
+        } else if (data.y < threshold) {
+          nes.buttonUp(1, Controller.BUTTON_UP)
+          nes.buttonUp(1, Controller.BUTTON_DOWN)
+        } else {
+          nes.buttonDown(1, Controller.BUTTON_DOWN)
+        }
+      })
+    },
+  })
+
+  //  ----------
   function keyboard(e: KeyboardEvent, fn: any) {
     const k = keyMap[e.key]
     const player = 1
@@ -198,5 +258,3 @@ function initController(nes: NES) {
     }
   }
 }
-
-function buffer() {}
