@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button onclick="start()">play</button>
+    <script>
+      function start() {
+        const audioCtx = new AudioContext()
+        const bufferSize = 4096
+        const scriptNode = audioCtx.createScriptProcessor(bufferSize, 0, 1)
+        const gainNode = audioCtx.createGain()
+        gainNode.gain.value = 1
+        scriptNode.onaudioprocess = function (event) {
+          const outputBuffer = event.outputBuffer
+          const channelData = outputBuffer.getChannelData(0)
+          for (let i = 0; i < bufferSize; i++) {
+            channelData[i] = Math.sin((this.currentPos + i) * 0.02)
+          }
+          this.currentPos += bufferSize
+          if (this.currentPos >= audioCtx.sampleRate * 10) {
+            this.currentPos = 0
+          }
+        }
+        scriptNode.connect(gainNode)
+        gainNode.connect(audioCtx.destination)
+        scriptNode.currentPos = 0
+      }
+    </script>
+  </body>
+</html>

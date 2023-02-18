@@ -1,4 +1,5 @@
 import { NES, Controller } from 'jsnes'
+import RingBuffer from 'ringbufferjs'
 
 const size = {
   w: 256,
@@ -9,8 +10,33 @@ var SAMPLE_COUNT = 4 * 1024
 var SAMPLE_MASK = SAMPLE_COUNT - 1
 
 export function useNES() {
+  const buffer = new RingBuffer<number>(new AudioContext().sampleRate * 2)
+
   const _canvas = createCanvas()
-  const _audio = createAudioContext()
+  const _audio = createAudioContext((e) => {
+    const left = e.outputBuffer.getChannelData(0)
+    const right = e.outputBuffer.getChannelData(1)
+    const size = left.length
+
+    if (buffer.size() < size * 2) {
+      return
+    }
+
+    try {
+      const samples = buffer.deqN(size * 2)
+      for (let i = 0; i < size; i++) {
+        left[i] = samples[i * 2]
+        right[i] = samples[i * 2 + 1]
+      }
+    } catch (e) {
+      for (let j = 0; j < size; j++) {
+        left[j] = 0
+        right[j] = 0
+      }
+      return
+    }
+  })
+
   const { ctx2d } = _canvas
 
   const ctx = reactive({
@@ -38,8 +64,9 @@ export function useNES() {
     },
     onStatusUpdate: console.log,
     sampleRate: _audio.ctx.sampleRate,
-    onAudioSample: function (l: any, r: any) {
-      _audio.freq = l || r
+    onAudioSample: (l: number, r: number) => {
+      buffer.enq(l)
+      buffer.enq(r)
     },
   })
 
@@ -109,38 +136,25 @@ function createCanvas() {
   }
 }
 
-function createAudioContext() {
+function createAudioContext(process: ScriptProcessorNode['onaudioprocess']) {
+  const bufferSize = 8192
+
   const audioCtx = new AudioContext()
+  const scriptNode = audioCtx.createScriptProcessor(bufferSize * 2, 0, 2)
+  const source = audioCtx.createBufferSource()
 
-  const mainGainNode = audioCtx.createGain()
-  mainGainNode.connect(audioCtx.destination)
-  mainGainNode.gain.value = 0.01
+  scriptNode.onaudioprocess = process
+  scriptNode.connect(audioCtx.destination)
 
-  const osc = audioCtx.createOscillator()
-
-  osc.connect(mainGainNode)
-
-  osc.frequency.value = 0
+  source.connect(scriptNode)
 
   return {
     ctx: audioCtx,
     start() {
-      osc.start()
+      source.start()
     },
     stop() {
-      osc.stop()
-    },
-    set freq(v: number) {
-      osc.frequency.value = v
-    },
-    get freq() {
-      return osc.frequency.value
-    },
-    set volume(v: number) {
-      mainGainNode.gain.value = v
-    },
-    get volume() {
-      return mainGainNode.gain.value
+      source.stop()
     },
   }
 }
@@ -184,3 +198,5 @@ function initController(nes: NES) {
     }
   }
 }
+
+function buffer() {}

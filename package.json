@@ -13,12 +13,14 @@
     "jsnes": "git://github.com/bfirsh/jsnes.git",
     "nes.css": "^2.3.0",
     "normalize.css": "^8.0.1",
+    "ringbufferjs": "^2.0.0",
     "vue": "^3.2.47",
     "vue-router": "^4.1.6"
   },
   "devDependencies": {
     "@iconify/json": "^2.2.22",
     "@types/node": "^18.13.0",
+    "@types/ringbufferjs": "^1.1.0",
     "@vitejs/plugin-vue": "^4.0.0",
     "dts-gen": "^0.6.1",
     "less": "^4.1.3",
