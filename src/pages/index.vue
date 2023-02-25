@@ -7,20 +7,13 @@ const output = ref<HTMLElement>()
 
 const peerId = useRouteQuery('id', '')
 
-const ns = useNES({
-  onKeyEvent(fn, params) {
-    peer.send({
-      type: 'keyEvent',
-      data: [fn, params],
-    })
-  },
-})
+const ns = useNES()
 
 const fps = ref('')
 
 interface MsgModel {
   type: string
-  data: any
+  data?: any
 }
 
 const peer = usePeer({
@@ -30,6 +23,20 @@ const peer = usePeer({
       const [fn, params] = data.data || {}
       ns.keyEvent(fn, params[0], 2)
     }
+  },
+  connected(conn) {
+    console.log(conn.peer, 'send call')
+    const videoStream = ns.video.dom.captureStream(60)
+
+    const audioStream = ns.audio.media
+
+    const combinedStream = new MediaStream([
+      //
+      ...videoStream.getTracks(),
+      ...audioStream.getTracks(),
+    ])
+
+    peer.peer.call(conn.peer, combinedStream)
   },
 })
 

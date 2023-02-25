@@ -1,11 +1,15 @@
 <script lang="ts" setup>
 import { useNES } from '@/hooks/useNES'
 import { usePeer } from '@/hooks/usePeer'
+import { sleep } from '@0x-jerry/utils'
+import { COMPLETIONSTATEMENT_TYPES } from '@babel/types'
 import { useRouteQuery } from '@vueuse/router'
 
 const output = ref<HTMLElement>()
 
 const hostId = useRouteQuery('host-id', '')
+
+const stream = ref<HTMLVideoElement>()
 
 const ns = useNES({
   player: 2,
@@ -35,6 +39,37 @@ const peer = usePeer({
   hostId,
 })
 
+peer.peer.on('call', (mediaConn) => {
+  console.log('receive call')
+
+  mediaConn.answer()
+
+  mediaConn.on('stream', async (_stream) => {
+    console.log('receive stream', _stream)
+
+    if (!stream.value) return
+
+    if (stream.value.srcObject instanceof MediaStream) {
+      let s = new MediaStream([
+        //
+        ..._stream.getTracks(),
+        ...stream.value.srcObject.getTracks(),
+      ])
+
+      stream.value.srcObject = s
+    } else {
+      stream.value.srcObject = _stream
+    }
+
+    await sleep(100)
+    stream.value.play()
+  })
+
+  mediaConn.on('error', (e) => {
+    console.error(e)
+  })
+})
+
 useTimeoutPoll(
   () => {
     fps.value = parseInt(ns.nes.getFPS()).toFixed(0)
@@ -46,7 +81,7 @@ useTimeoutPoll(
 )
 
 onMounted(async () => {
-  ns.mount(output.value!)
+  // ns.mount(output.value!)
 })
 
 async function loadRom() {
@@ -74,7 +109,9 @@ async function loadRom() {
 
       <!--  -->
     </div>
-    <div ref="output" class="aspect-[256/240] w-600px"></div>
+    <div ref="output" class="aspect-[256/240] w-600px">
+      <video controls autoplay class="w-full h-full" ref="stream"></video>
+    </div>
     <NButton @click="loadRom">Load ROM</NButton>
   </div>
 </template>

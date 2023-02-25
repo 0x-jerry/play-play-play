@@ -6,6 +6,7 @@ export interface UsePeerOption {
   id?: MaybeRef<string>
   receive?(data: any): void
   hostId?: MaybeRef<string>
+  connected?(conn: DataConnection): void
 }
 
 export function usePeer(opt?: UsePeerOption) {
@@ -27,9 +28,10 @@ export function usePeer(opt?: UsePeerOption) {
   })
 
   peer.on('connection', (conn) => {
+    opt?.connected?.(conn)
+
     conn.on('data', (_data: any) => {
       opt?.receive?.(_data)
-      console.log(_data)
       if (_data?.type === 'ping') {
         conn.send({
           type: 'pong',

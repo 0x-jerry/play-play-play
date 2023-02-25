@@ -6,6 +6,7 @@ import { useXGamepad } from './useXGamepad'
 const size = {
   w: 256,
   h: 240,
+  scale: 2,
 }
 
 interface UseNESOption {
@@ -65,6 +66,7 @@ export function useNES(opt?: UseNESOption) {
   return {
     nes,
     audio: _audio,
+    video: _canvas,
     mount(el: HTMLElement) {
       el.appendChild(_canvas.dom)
     },
@@ -119,7 +121,7 @@ export function useNES(opt?: UseNESOption) {
   function render() {
     const imageData = new ImageData(new Uint8ClampedArray(output.buf32.buffer), size.w, size.h)
 
-    ctx2d.putImageData(imageData, 0, 0)
+    ctx2d.putImageData(scaleImage(imageData, size.scale), 0, 0)
   }
 
   async function load(romPath: string) {
@@ -224,8 +226,8 @@ export function useNES(opt?: UseNESOption) {
 function createCanvas() {
   const canvas = document.createElement('canvas')
   canvas.style.width = '100%'
-  canvas.width = size.w
-  canvas.height = size.h
+  canvas.width = size.w * size.scale
+  canvas.height = size.h * size.scale
 
   const ctx2d = canvas.getContext('2d')!
 
@@ -247,8 +249,14 @@ function createAudioContext(process: ScriptProcessorNode['onaudioprocess']) {
 
   source.connect(scriptNode)
 
+  const destination = audioCtx.createMediaStreamDestination()
+  scriptNode.connect(destination)
+
+  const mediaStream = destination.stream
+
   return {
     ctx: audioCtx,
+    media: mediaStream,
     start() {
       source.start()
     },
@@ -269,4 +277,40 @@ async function loadRom(romPath: string) {
     reader.onerror = (e) => reject(e)
     reader.readAsBinaryString(res)
   })
+}
+
+function scaleImage(imagedata: ImageData, scale: number): ImageData {
+  // 获取图像数据的宽度和高度
+  const width = imagedata.width
+  const height = imagedata.height
+
+  // 创建新的 ImageData 对象，用于存储放大后的图像数据
+  const scaledImageData = new ImageData(width * scale, height * scale)
+
+  // 循环遍历每个像素
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      // 获取当前像素的位置
+      const index = (y * width + x) * 4
+
+      // 获取当前像素的颜色值
+      const red = imagedata.data[index]
+      const green = imagedata.data[index + 1]
+      const blue = imagedata.data[index + 2]
+      const alpha = imagedata.data[index + 3]
+
+      // 在放大后的图像数据中写入当前像素的颜色值
+      for (let sy = 0; sy < scale; sy++) {
+        for (let sx = 0; sx < scale; sx++) {
+          const scaledIndex = ((y * scale + sy) * width * scale + (x * scale + sx)) * 4
+          scaledImageData.data[scaledIndex] = red
+          scaledImageData.data[scaledIndex + 1] = green
+          scaledImageData.data[scaledIndex + 2] = blue
+          scaledImageData.data[scaledIndex + 3] = alpha
+        }
+      }
+    }
+  }
+
+  return scaledImageData
 }
