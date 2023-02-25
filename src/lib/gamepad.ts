@@ -89,7 +89,10 @@ export class GamepadController extends EventEmitter<GamepadControllerEvents> {
   }
 
   _updateLoop = () => {
-    this._update()
+    if (document.hasFocus()) {
+      this._update()
+    }
+
     this._rafId = requestAnimationFrame(this._updateLoop)
   }
 
