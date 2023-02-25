@@ -8,7 +8,12 @@ const size = {
   h: 240,
 }
 
-export function useNES() {
+interface UseNESOption {
+  onKeyEvent?(fnName: 'buttonDown' | 'buttonUp', params: any): void
+  player?: number
+}
+
+export function useNES(opt?: UseNESOption) {
   const buffer = new RingBuffer<number>(new AudioContext().sampleRate * 2)
 
   const _canvas = createCanvas()
@@ -51,7 +56,7 @@ export function useNES() {
     },
   })
 
-  initController(nes)
+  initController()
 
   onUnmounted(() => {
     cancelAnimationFrame(cache._id)
@@ -81,6 +86,9 @@ export function useNES() {
     load,
     pause() {
       ctx.paused = true
+    },
+    keyEvent(fnName: 'buttonDown' | 'buttonUp', button: number, player: number) {
+      nes[fnName](player, button)
     },
   }
 
@@ -128,6 +136,88 @@ export function useNES() {
     render()
 
     cache._id = requestAnimationFrame(run)
+  }
+
+  function initController() {
+    const keyMap: Record<string, number> = {
+      w: Controller.BUTTON_UP,
+      s: Controller.BUTTON_DOWN,
+      a: Controller.BUTTON_LEFT,
+      d: Controller.BUTTON_RIGHT,
+
+      j: Controller.BUTTON_A,
+      k: Controller.BUTTON_B,
+      g: Controller.BUTTON_SELECT,
+      h: Controller.BUTTON_START,
+    }
+
+    useEventListener('keydown', (e) => keyboard(e, 'buttonDown'))
+
+    useEventListener('keyup', (e) => keyboard(e, 'buttonUp'))
+
+    // setup with gamepad
+    const gamepadButtonsMap: Partial<Record<Buttons, any>> = {
+      a: Controller.BUTTON_A,
+      b: Controller.BUTTON_B,
+      view: Controller.BUTTON_SELECT,
+      menu: Controller.BUTTON_START,
+    }
+
+    useXGamepad({
+      connect(vg) {
+        vg.controller.on('press', (key) => {
+          const nesKey = gamepadButtonsMap[key]
+          if (nesKey != null) {
+            keyEvent('buttonDown', nesKey)
+          }
+        })
+
+        vg.controller.on('release', (key) => {
+          const nesKey = gamepadButtonsMap[key]
+          if (nesKey != null) {
+            keyEvent('buttonUp', nesKey)
+          }
+        })
+
+        vg.controller.on('move', (d, data) => {
+          if (d !== 'left') return
+
+          const threshold = 0.4
+
+          if (data.x < -threshold) {
+            keyEvent('buttonDown', Controller.BUTTON_LEFT)
+          } else if (data.x < threshold) {
+            keyEvent('buttonUp', Controller.BUTTON_LEFT)
+            keyEvent('buttonUp', Controller.BUTTON_RIGHT)
+          } else {
+            keyEvent('buttonDown', Controller.BUTTON_RIGHT)
+          }
+
+          if (data.y < -threshold) {
+            keyEvent('buttonDown', Controller.BUTTON_UP)
+          } else if (data.y < threshold) {
+            keyEvent('buttonUp', Controller.BUTTON_UP)
+            keyEvent('buttonUp', Controller.BUTTON_DOWN)
+          } else {
+            keyEvent('buttonDown', Controller.BUTTON_DOWN)
+          }
+        })
+      },
+    })
+
+    //  ----------
+    function keyboard(e: KeyboardEvent, fnName: 'buttonDown' | 'buttonUp') {
+      const k = keyMap[e.key]
+
+      if (k != null) {
+        keyEvent(fnName, k)
+      }
+    }
+  }
+
+  function keyEvent(fnName: 'buttonDown' | 'buttonUp', button: number, player?: number) {
+    nes[fnName](player || opt?.player || 1, button)
+    opt?.onKeyEvent?.(fnName, [button])
   }
 }
 
@@ -179,82 +269,4 @@ async function loadRom(romPath: string) {
     reader.onerror = (e) => reject(e)
     reader.readAsBinaryString(res)
   })
-}
-
-function initController(nes: NES) {
-  const keyMap: Record<string, number> = {
-    w: Controller.BUTTON_UP,
-    s: Controller.BUTTON_DOWN,
-    a: Controller.BUTTON_LEFT,
-    d: Controller.BUTTON_RIGHT,
-
-    j: Controller.BUTTON_A,
-    k: Controller.BUTTON_B,
-    g: Controller.BUTTON_SELECT,
-    h: Controller.BUTTON_START,
-  }
-
-  useEventListener('keydown', (e) => keyboard(e, nes.buttonDown))
-
-  useEventListener('keyup', (e) => keyboard(e, nes.buttonUp))
-
-  // setup with gamepad
-  const gamepadButtonsMap: Partial<Record<Buttons, any>> = {
-    a: Controller.BUTTON_A,
-    b: Controller.BUTTON_B,
-    view: Controller.BUTTON_SELECT,
-    menu: Controller.BUTTON_START,
-  }
-
-  useXGamepad({
-    connect(vg) {
-      vg.controller.on('press', (key) => {
-        const nesKey = gamepadButtonsMap[key]
-        if (nesKey != null) {
-          nes.buttonDown(1, nesKey)
-        }
-      })
-
-      vg.controller.on('release', (key) => {
-        const nesKey = gamepadButtonsMap[key]
-        if (nesKey != null) {
-          nes.buttonUp(1, nesKey)
-        }
-      })
-
-      vg.controller.on('move', (d, data) => {
-        if (d !== 'left') return
-
-        const threshold = 0.4
-
-        if (data.x < -threshold) {
-          nes.buttonDown(1, Controller.BUTTON_LEFT)
-        } else if (data.x < threshold) {
-          nes.buttonUp(1, Controller.BUTTON_LEFT)
-          nes.buttonUp(1, Controller.BUTTON_RIGHT)
-        } else {
-          nes.buttonDown(1, Controller.BUTTON_RIGHT)
-        }
-
-        if (data.y < -threshold) {
-          nes.buttonDown(1, Controller.BUTTON_UP)
-        } else if (data.y < threshold) {
-          nes.buttonUp(1, Controller.BUTTON_UP)
-          nes.buttonUp(1, Controller.BUTTON_DOWN)
-        } else {
-          nes.buttonDown(1, Controller.BUTTON_DOWN)
-        }
-      })
-    },
-  })
-
-  //  ----------
-  function keyboard(e: KeyboardEvent, fn: any) {
-    const k = keyMap[e.key]
-    const player = 1
-
-    if (k != null) {
-      fn(player, k)
-    }
-  }
 }

@@ -1,3 +1,3 @@
-# tpl-vue
+# Play Play Play
 
-Template for vue project.
+Play game on the web

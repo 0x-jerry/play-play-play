@@ -5,10 +5,12 @@ import { useRouteQuery } from '@vueuse/router'
 
 const output = ref<HTMLElement>()
 
-const peerId = useRouteQuery('id', '')
+const hostId = useRouteQuery('host-id', '')
 
 const ns = useNES({
+  player: 2,
   onKeyEvent(fn, params) {
+    console.log('send', fn, params)
     peer.send({
       type: 'keyEvent',
       data: [fn, params],
@@ -24,13 +26,13 @@ interface MsgModel {
 }
 
 const peer = usePeer({
-  id: peerId,
   receive(data: MsgModel) {
     if (data?.type === 'keyEvent') {
       const [fn, params] = data.data || {}
-      ns.keyEvent(fn, params[0], 2)
+      ns.keyEvent(fn, params[0], 1)
     }
   },
+  hostId,
 })
 
 useTimeoutPoll(
@@ -59,7 +61,14 @@ async function loadRom() {
   <div class="flex flex-col items-center justify-center w-screen gap-2 mt-50px">
     <div class="info">
       <div class="nes-field">
-        <label for="name_field">ID: {{ peer.ctx.id }}</label>
+        <input
+          type="text"
+          id="name_field"
+          class="nes-input"
+          placeholder="Host ID"
+          v-model="hostId"
+        />
+        <span>Connected Host: {{ peer.connected }}</span>
       </div>
       <div>FPS: {{ fps }}</div>
 
