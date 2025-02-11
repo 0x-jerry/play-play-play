@@ -66,11 +66,11 @@ const gamepadMapConfig: Record<SupportDevice, Record<number, Buttons>> = {
 }
 
 export type GamepadControllerEvents = {
-  press(button: Buttons, data: GamepadButton): void
+  press:[button: Buttons, data: GamepadButton],
 
-  release(button: Buttons, data: GamepadButton): void
+  release:[button: Buttons, data: GamepadButton],
 
-  move(joystick: 'left' | 'right', data: GamepadAxes): void
+  move:[joystick: 'left' | 'right', data: GamepadAxes]
 }
 
 export class GamepadController extends EventEmitter<GamepadControllerEvents> {
