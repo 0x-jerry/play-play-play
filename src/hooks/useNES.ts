@@ -18,7 +18,7 @@ export function useNES(opt?: UseNESOption) {
   const buffer = new RingBuffer<number>(new AudioContext().sampleRate * 2)
 
   const _canvas = createCanvas()
-  const _audio = createAudioContext(processAudio)
+  const _audio = createAudioContext()
 
   const { ctx2d } = _canvas
 
@@ -54,6 +54,19 @@ export function useNES(opt?: UseNESOption) {
     onAudioSample: (l: number, r: number) => {
       buffer.enq(l)
       buffer.enq(r)
+
+      if (buffer.isFull()) {
+        const sampleRate = _audio.ctx.sampleRate
+
+        const _l = _audio.source.buffer?.getChannelData(0)!
+        const _r = _audio.source.buffer?.getChannelData(1)!
+        const samples = buffer.deqN(sampleRate * 2);
+
+        for (let i = 0; i < sampleRate; i++) {
+          _l[i] = samples[i * 2] 
+          _r[i] = samples[i * 2 + 1] 
+        }
+      }
     },
   })
 
@@ -237,26 +250,18 @@ function createCanvas() {
   }
 }
 
-function createAudioContext(process: ScriptProcessorNode['onaudioprocess']) {
-  const bufferSize = 8192
-
+function createAudioContext() {
   const audioCtx = new AudioContext()
-  const scriptNode = audioCtx.createScriptProcessor(bufferSize * 2, 0, 2)
   const source = audioCtx.createBufferSource()
 
-  scriptNode.onaudioprocess = process
-  scriptNode.connect(audioCtx.destination)
-
-  source.connect(scriptNode)
-
   const destination = audioCtx.createMediaStreamDestination()
-  scriptNode.connect(destination)
 
   const mediaStream = destination.stream
 
   return {
     ctx: audioCtx,
     media: mediaStream,
+    source,
     start() {
       source.start()
     },
