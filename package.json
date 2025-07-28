@@ -15,8 +15,8 @@
   },
   "dependencies": {
     "@0x-jerry/utils": "^4.2.2",
-    "@vueuse/core": "^12.5.0",
-    "@vueuse/router": "^12.5.0",
+    "@vueuse/core": "^13.0.0",
+    "@vueuse/router": "^13.0.0",
     "jsnes": "github:bfirsh/jsnes",
     "nes.css": "^2.3.0",
     "normalize.css": "^8.0.1",
