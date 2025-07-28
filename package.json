@@ -30,7 +30,7 @@
     "@iconify/json": "^2.2.305",
     "@types/node": "^22.13.1",
     "@types/ringbufferjs": "^1.1.2",
-    "@vitejs/plugin-vue": "^5.2.1",
+    "@vitejs/plugin-vue": "^6.0.0",
     "dts-gen": "^0.10.4",
     "less": "^4.2.2",
     "typescript": "^5.7.3",

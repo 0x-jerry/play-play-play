@@ -19,7 +19,7 @@ importers:
         version: 12.5.0(typescript@5.7.3)(vue-router@4.5.0(vue@3.5.13(typescript@5.7.3)))
       jsnes:
         specifier: github:bfirsh/jsnes
-        version: https://codeload.github.com/bfirsh/jsnes/tar.gz/d8021d0336cb5c1cf924cd660ecf816bec15c11a
+        version: https://codeload.github.com/bfirsh/jsnes/tar.gz/dab5180e10cec1907229df49e0aef0aa485e4f4b
       nes.css:
         specifier: ^2.3.0
         version: 2.3.0
@@ -52,8 +52,8 @@ importers:
         specifier: ^1.1.2
         version: 1.1.2
       '@vitejs/plugin-vue':
-        specifier: ^5.2.1
-        version: 5.2.1(vite@6.1.0(@types/node@22.13.1)(jiti@2.4.2)(less@4.2.2)(tsx@4.19.2)(yaml@2.7.0))(vue@3.5.13(typescript@5.7.3))
+        specifier: ^6.0.0
+        version: 6.0.1(vite@6.1.0(@types/node@22.13.1)(jiti@2.4.2)(less@4.2.2)(tsx@4.19.2)(yaml@2.7.0))(vue@3.5.13(typescript@5.7.3))
       dts-gen:
         specifier: ^0.10.4
         version: 0.10.4
@@ -575,6 +575,9 @@ packages:
   '@polka/url@1.0.0-next.28':
     resolution: {integrity: sha512-8LduaNlMZGwdZ6qWrKlfa+2M4gahzFkprZiAt2TF8uS0qQgBizKXpXURqvTJ4WtmupWxaLqjRb2UCTe72mu+Aw==}
 
+  '@rolldown/pluginutils@1.0.0-beta.29':
+    resolution: {integrity: sha512-NIJgOsMjbxAXvoGq/X0gD7VPMQ8j9g0BiDaNjVNVjvl+iKXxL3Jre0v31RmBYeLEmkbj2s02v8vFTbUXi5XS2Q==}
+
   '@rollup/pluginutils@5.1.4':
     resolution: {integrity: sha512-USm05zrsFxYLPdWWq+K3STlWiT/3ELn3RcV5hJMghpeAIhxfsUIg6mt12CBJBInWMV4VneoV7SfGv8xIwo2qNQ==}
     engines: {node: '>=14.0.0'}
@@ -787,11 +790,11 @@ packages:
     peerDependencies:
       vite: ^2.9.0 || ^3.0.0-0 || ^4.0.0 || ^5.0.0-0 || ^6.0.0-0
 
-  '@vitejs/plugin-vue@5.2.1':
-    resolution: {integrity: sha512-cxh314tzaWwOLqVes2gnnCtvBDcM1UMdn+iFR+UjAn411dPT3tOmqrJjbMd7koZpMAmBM/GqeV4n9ge7JSiJJQ==}
-    engines: {node: ^18.0.0 || >=20.0.0}
+  '@vitejs/plugin-vue@6.0.1':
+    resolution: {integrity: sha512-+MaE752hU0wfPFJEUAIxqw18+20euHHdxVtMvbFcOEpjEyfqXH/5DCoTHiVJ0J29EhTJdoTkjEv5YBKU9dnoTw==}
+    engines: {node: ^20.19.0 || >=22.12.0}
     peerDependencies:
-      vite: ^5.0.0 || ^6.0.0
+      vite: ^5.0.0 || ^6.0.0 || ^7.0.0
       vue: ^3.2.25
 
   '@vitest/expect@3.0.5':
@@ -1180,8 +1183,8 @@ packages:
   js-tokens@9.0.1:
     resolution: {integrity: sha512-mxa9E9ITFOt0ban3j6L5MpjwegGz6lBQmM1IJkWeBZGcMxto50+eWdjC/52xDbS2vy0k7vIMK0Fe2wfL9OQSpQ==}
 
-  jsnes@https://codeload.github.com/bfirsh/jsnes/tar.gz/d8021d0336cb5c1cf924cd660ecf816bec15c11a:
-    resolution: {tarball: https://codeload.github.com/bfirsh/jsnes/tar.gz/d8021d0336cb5c1cf924cd660ecf816bec15c11a}
+  jsnes@https://codeload.github.com/bfirsh/jsnes/tar.gz/dab5180e10cec1907229df49e0aef0aa485e4f4b:
+    resolution: {tarball: https://codeload.github.com/bfirsh/jsnes/tar.gz/dab5180e10cec1907229df49e0aef0aa485e4f4b}
     version: 1.2.1
 
   json5@2.2.3:
@@ -2048,6 +2051,8 @@ snapshots:
 
   '@polka/url@1.0.0-next.28': {}
 
+  '@rolldown/pluginutils@1.0.0-beta.29': {}
+
   '@rollup/pluginutils@5.1.4(rollup@4.34.6)':
     dependencies:
       '@types/estree': 1.0.6
@@ -2281,8 +2286,9 @@ snapshots:
       - supports-color
       - vue
 
-  '@vitejs/plugin-vue@5.2.1(vite@6.1.0(@types/node@22.13.1)(jiti@2.4.2)(less@4.2.2)(tsx@4.19.2)(yaml@2.7.0))(vue@3.5.13(typescript@5.7.3))':
+  '@vitejs/plugin-vue@6.0.1(vite@6.1.0(@types/node@22.13.1)(jiti@2.4.2)(less@4.2.2)(tsx@4.19.2)(yaml@2.7.0))(vue@3.5.13(typescript@5.7.3))':
     dependencies:
+      '@rolldown/pluginutils': 1.0.0-beta.29
       vite: 6.1.0(@types/node@22.13.1)(jiti@2.4.2)(less@4.2.2)(tsx@4.19.2)(yaml@2.7.0)
       vue: 3.5.13(typescript@5.7.3)
 
@@ -2723,7 +2729,7 @@ snapshots:
 
   js-tokens@9.0.1: {}
 
-  jsnes@https://codeload.github.com/bfirsh/jsnes/tar.gz/d8021d0336cb5c1cf924cd660ecf816bec15c11a: {}
+  jsnes@https://codeload.github.com/bfirsh/jsnes/tar.gz/dab5180e10cec1907229df49e0aef0aa485e4f4b: {}
 
   json5@2.2.3: {}
 
