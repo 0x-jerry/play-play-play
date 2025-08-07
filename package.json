@@ -26,7 +26,7 @@
     "vue-router": "^4.5.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
+    "@biomejs/biome": "^2.0.0",
     "@iconify/json": "^2.2.305",
     "@types/node": "^22.13.1",
     "@types/ringbufferjs": "^1.1.2",
