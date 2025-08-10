@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@0x-jerry/utils':
-        specifier: ^4.2.2
-        version: 4.2.2
+        specifier: ^5.0.0
+        version: 5.0.0
       '@vueuse/core':
         specifier: ^12.5.0
         version: 12.5.0(typescript@5.7.3)
@@ -19,7 +19,7 @@ importers:
         version: 12.5.0(typescript@5.7.3)(vue-router@4.5.0(vue@3.5.13(typescript@5.7.3)))
       jsnes:
         specifier: github:bfirsh/jsnes
-        version: https://codeload.github.com/bfirsh/jsnes/tar.gz/d8021d0336cb5c1cf924cd660ecf816bec15c11a
+        version: https://codeload.github.com/bfirsh/jsnes/tar.gz/dab5180e10cec1907229df49e0aef0aa485e4f4b
       nes.css:
         specifier: ^2.3.0
         version: 2.3.0
@@ -90,8 +90,8 @@ importers:
 
 packages:
 
-  '@0x-jerry/utils@4.2.2':
-    resolution: {integrity: sha512-5msyxVu5P0R9zKkdGE98jRCEQuriOif3xG1LOC30o+qjIqJN8mU5wM+uOocjCuA5ke0WVgqo24nZHwTWunivJg==}
+  '@0x-jerry/utils@5.0.0':
+    resolution: {integrity: sha512-F3TnKTJrCRCKe9FG0eWEVlgYDFusC6p0hePjyR7mKAgGj61/4lScng7Dj/ss2Fo2zJvH8qWv2G7fSvW45n7fQQ==}
 
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
@@ -1180,8 +1180,8 @@ packages:
   js-tokens@9.0.1:
     resolution: {integrity: sha512-mxa9E9ITFOt0ban3j6L5MpjwegGz6lBQmM1IJkWeBZGcMxto50+eWdjC/52xDbS2vy0k7vIMK0Fe2wfL9OQSpQ==}
 
-  jsnes@https://codeload.github.com/bfirsh/jsnes/tar.gz/d8021d0336cb5c1cf924cd660ecf816bec15c11a:
-    resolution: {tarball: https://codeload.github.com/bfirsh/jsnes/tar.gz/d8021d0336cb5c1cf924cd660ecf816bec15c11a}
+  jsnes@https://codeload.github.com/bfirsh/jsnes/tar.gz/dab5180e10cec1907229df49e0aef0aa485e4f4b:
+    resolution: {tarball: https://codeload.github.com/bfirsh/jsnes/tar.gz/dab5180e10cec1907229df49e0aef0aa485e4f4b}
     version: 1.2.1
 
   json5@2.2.3:
@@ -1262,8 +1262,8 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
-  nanoid@5.0.9:
-    resolution: {integrity: sha512-Aooyr6MXU6HpvvWXKoVoXwKMs/KyVakWwg7xQfv5/S/RIgJMy0Ifa45H9qqYy7pTCszrHzP21Uk4PZq2HpEM8Q==}
+  nanoid@5.1.5:
+    resolution: {integrity: sha512-Ir/+ZpE9fDsNH0hQ3C68uyThDXzYcim2EqcZ8zn8Chtt1iylPT9xXJB0kPCnqzgcEGikO9RxSrh63MsmVCU7Fw==}
     engines: {node: ^18 || >=20}
     hasBin: true
 
@@ -1712,10 +1712,10 @@ packages:
 
 snapshots:
 
-  '@0x-jerry/utils@4.2.2':
+  '@0x-jerry/utils@5.0.0':
     dependencies:
       fflate: 0.8.2
-      nanoid: 5.0.9
+      nanoid: 5.1.5
       picocolors: 1.1.1
 
   '@ampproject/remapping@2.3.0':
@@ -2723,7 +2723,7 @@ snapshots:
 
   js-tokens@9.0.1: {}
 
-  jsnes@https://codeload.github.com/bfirsh/jsnes/tar.gz/d8021d0336cb5c1cf924cd660ecf816bec15c11a: {}
+  jsnes@https://codeload.github.com/bfirsh/jsnes/tar.gz/dab5180e10cec1907229df49e0aef0aa485e4f4b: {}
 
   json5@2.2.3: {}
 
@@ -2802,7 +2802,7 @@ snapshots:
 
   nanoid@3.3.8: {}
 
-  nanoid@5.0.9: {}
+  nanoid@5.1.5: {}
 
   needle@3.3.1:
     dependencies:
